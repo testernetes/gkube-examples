@@ -41,5 +41,5 @@ var _ = Describe("customized use of the KubernetesHelper", func() {
 
 func TestKubernetesHelper(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Simple")
+	RunSpecs(t, "Openshift")
 }
