@@ -2,37 +2,44 @@ package simple
 
 import (
 	"testing"
-	"time"
 
 	. "github.com/matt-simons/gkube"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var _ = Describe("Simple use of the KubernetesHelper", func() {
+var _ = Describe("Simple use of the KubernetesHelper", Ordered, func() {
 
-	It("Should create and delete a namespace", func() {
+	var k8s KubernetesHelper
+	var namespace *corev1.Namespace
 
-		By("Creating a new default KubernetesHelper")
-		k8s := NewKubernetesHelper()
-
-		namespace := &corev1.Namespace{
+	BeforeAll(func() {
+		k8s = NewKubernetesHelper()
+		namespace = &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "simple",
 			},
 		}
+	})
 
-		By("Using the KubernetesHelper to create the namespace")
+	It("should create a namespace", func() {
 		Eventually(k8s.Create(namespace)).Should(Succeed())
+		Eventually(k8s.Object(namespace)).Should(
+			WithJSONPath("{.status.phase}", Equal(corev1.NamespacePhase("Active"))),
+		)
+	})
 
-		By("Filtering a list of namespaces using a JSON path")
-		Eventually(k8s.Objects(&corev1.NamespaceList{})).Should(WithJSONPath("{.items[*].metadata.name}", ContainElement("simple")))
+	It("should filter a list of namespaces using a JSONPath", func() {
+		Eventually(k8s.Objects(&corev1.NamespaceList{})).Should(
+			WithJSONPath("{.items[*].metadata.name}", ContainElement("simple")),
+		)
+	})
 
-		By("Waiting additional time for any namespaced objects to delete")
-		Eventually(k8s.Delete(namespace)).WithTimeout(time.Minute).Should(Succeed())
+	AfterAll(func() {
+		Eventually(k8s.Delete(namespace, GracePeriodSeconds(30))).Should(Succeed())
 	})
 })
 
