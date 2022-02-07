@@ -1,13 +1,13 @@
-package simple
+package conditions
 
 import (
 	"testing"
 	"time"
 
-	. "github.com/matt-simons/gkube"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
+	. "github.com/tkube/gkube"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"

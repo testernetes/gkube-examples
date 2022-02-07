@@ -3,9 +3,9 @@ package simple
 import (
 	"testing"
 
-	. "github.com/matt-simons/gkube"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/tkube/gkube"
 
 	openshiftapi "github.com/openshift/api"
 	configv1 "github.com/openshift/api/config/v1"

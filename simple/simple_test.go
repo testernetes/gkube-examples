@@ -3,9 +3,9 @@ package simple
 import (
 	"testing"
 
-	. "github.com/matt-simons/gkube"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	. "github.com/tkube/gkube"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
