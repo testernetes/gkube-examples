@@ -1,4 +1,4 @@
-module github.com/tkube/gkube-examples
+module github.com/testernetes/gkube-examples
 
 go 1.17
 
@@ -7,8 +7,8 @@ require (
 	github.com/onsi/ginkgo/v2 v2.0.0-rc3
 	github.com/onsi/gomega v1.17.0
 	github.com/openshift/api v0.0.0-20211028023115-7224b732cc14
-	github.com/tkube/gkube v0.0.0-20220207143243-ebfb5e179b09
-	github.com/tkube/trackedclient v0.0.0-20220207143835-6e562829a79e
+	github.com/testernetes/gkube v0.0.0-20220406091345-946c0944b670
+	github.com/testernetes/trackedclient v0.0.0-20220406090936-e29c7eddb8f9
 	k8s.io/api v0.23.1
 	k8s.io/apimachinery v0.23.1
 	k8s.io/client-go v0.23.1

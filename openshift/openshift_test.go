@@ -5,7 +5,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/tkube/gkube"
+	. "github.com/testernetes/gkube"
 
 	openshiftapi "github.com/openshift/api"
 	configv1 "github.com/openshift/api/config/v1"
