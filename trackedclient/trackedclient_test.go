@@ -16,7 +16,7 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 )
 
-var _ = Describe("TrackedClient with KubernetesHelper", Ordered, func() {
+var _ = Describe("TrackedClient", Ordered, func() {
 
 	var c tc.TrackedClient
 	var k8s KubernetesHelper
@@ -37,7 +37,7 @@ var _ = Describe("TrackedClient with KubernetesHelper", Ordered, func() {
 		}
 		Eventually(k8s.Create(namespace)).Should(Succeed())
 		Eventually(k8s.Object(namespace)).Should(
-			WithJSONPath("{.status.phase}", Equal(corev1.NamespacePhase("Active"))),
+			HaveJSONPath("{.status.phase}", Equal(corev1.NamespacePhase("Active"))),
 		)
 	})
 

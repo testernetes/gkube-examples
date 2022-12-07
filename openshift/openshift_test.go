@@ -3,7 +3,7 @@ package simple
 import (
 	"testing"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/testernetes/gkube"
 
@@ -14,25 +14,24 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
-var _ = Describe("customized use of the KubernetesHelper", func() {
+var _ = Describe("Openshift", Ordered, func() {
 
-	It("Should have completed an Openshift Version upgrade", func() {
+	var k8s KubernetesHelper
 
-		By("Creating a new KubernetesHelper with custom schema")
-
+	BeforeAll(func() {
 		scheme := runtime.NewScheme()
 		openshiftapi.Install(scheme)
 
-		k8s := NewKubernetesHelper(WithScheme(scheme))
+		k8s = NewKubernetesHelper(WithScheme(scheme))
+	})
 
+	It("Should have completed an Openshift Version upgrade", func() {
 		clusterversion := &configv1.ClusterVersion{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "version",
 			},
 		}
-
-		By("Filtering the avaiable condition using a JSON path")
-		Eventually(k8s.Object(clusterversion)).Should(WithJSONPath(
+		Eventually(k8s.Object(clusterversion)).Should(HaveJSONPath(
 			`{.status.conditions[?(@.type=="Available")].status}`,
 			BeEquivalentTo(corev1.ConditionTrue)),
 		)

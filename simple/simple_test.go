@@ -14,32 +14,39 @@ import (
 var _ = Describe("Simple use of the KubernetesHelper", Ordered, func() {
 
 	var k8s KubernetesHelper
-	var namespace *corev1.Namespace
+	var cm *corev1.ConfigMap
 
 	BeforeAll(func() {
 		k8s = NewKubernetesHelper()
-		namespace = &corev1.Namespace{
+		cm = &corev1.ConfigMap{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "simple",
+				Name:      "simple-example",
+				Namespace: "default",
 			},
 		}
 	})
 
-	It("should create a namespace", func() {
-		Eventually(k8s.Create(namespace)).Should(Succeed())
-		Eventually(k8s.Object(namespace)).Should(
-			WithJSONPath("{.status.phase}", Equal(corev1.NamespacePhase("Active"))),
-		)
+	It("should create a configmap", func() {
+		Eventually(k8s.Create(cm)).Should(Succeed())
 	})
 
-	It("should filter a list of namespaces using a JSONPath", func() {
-		Eventually(k8s.Objects(&corev1.NamespaceList{})).Should(
-			WithJSONPath("{.items[*].metadata.name}", ContainElement("simple")),
+	It("should update the configmap", func() {
+		Eventually(k8s.Update(cm, func() error {
+			cm.Data = map[string]string{
+				"something": "simple",
+			}
+			return nil
+		})).Should(Succeed())
+	})
+
+	It("should contain something simple ", func() {
+		Eventually(k8s.Object(cm)).Should(
+			HaveJSONPath("{.data.something}", Equal("simple")),
 		)
 	})
 
 	AfterAll(func() {
-		Eventually(k8s.Delete(namespace, GracePeriodSeconds(30))).Should(Succeed())
+		Eventually(k8s.Delete(cm)).Should(Succeed())
 	})
 })
 

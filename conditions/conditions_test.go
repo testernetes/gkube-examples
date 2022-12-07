@@ -55,7 +55,7 @@ var _ = Describe("Conditions", Ordered, func() {
 	})
 
 	It("Should become healthy", func() {
-		Eventually(k8s.Object(deployment)).WithTimeout(time.Minute).Should(WithJSONPath(
+		Eventually(k8s.Object(deployment)).WithTimeout(time.Minute).Should(HaveJSONPath(
 			`{.status.conditions[?(@.type=="Available")]}`,
 			MatchFields(IgnoreExtras, Fields{
 				"Status": BeEquivalentTo(corev1.ConditionTrue),
