@@ -2,6 +2,7 @@ package simple
 
 import (
 	"testing"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -26,28 +27,28 @@ var _ = Describe("Simple use of the KubernetesHelper", Ordered, func() {
 		}
 	})
 
-	It("should create a configmap", func() {
-		Eventually(k8s.Create(cm)).Should(Succeed())
-	})
+	It("should create a configmap", func(ctx SpecContext) {
+		Eventually(k8s.Create(ctx, cm)).Should(Succeed())
+	}, SpecTimeout(time.Minute))
 
-	It("should update the configmap", func() {
-		Eventually(k8s.Update(cm, func() error {
+	It("should update the configmap", func(ctx SpecContext) {
+		Eventually(k8s.Update(ctx, cm, func() error {
 			cm.Data = map[string]string{
 				"something": "simple",
 			}
 			return nil
 		})).Should(Succeed())
-	})
+	}, SpecTimeout(time.Minute))
 
-	It("should contain something simple ", func() {
-		Eventually(k8s.Object(cm)).Should(
+	It("should contain something simple ", func(ctx SpecContext) {
+		Eventually(k8s.Object(ctx, cm)).Should(
 			HaveJSONPath("{.data.something}", Equal("simple")),
 		)
-	})
+	}, SpecTimeout(time.Minute))
 
-	AfterAll(func() {
-		Eventually(k8s.Delete(cm)).Should(Succeed())
-	})
+	AfterAll(func(ctx SpecContext) {
+		Eventually(k8s.Delete(ctx, cm)).Should(Succeed())
+	}, NodeTimeout(time.Minute))
 })
 
 func TestKubernetesHelper(t *testing.T) {

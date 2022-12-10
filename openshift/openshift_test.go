@@ -2,6 +2,7 @@ package simple
 
 import (
 	"testing"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -25,17 +26,17 @@ var _ = Describe("Openshift", Ordered, func() {
 		k8s = NewKubernetesHelper(WithScheme(scheme))
 	})
 
-	It("Should have completed an Openshift Version upgrade", func() {
+	It("Should have completed an Openshift Version upgrade", func(ctx SpecContext) {
 		clusterversion := &configv1.ClusterVersion{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "version",
 			},
 		}
-		Eventually(k8s.Object(clusterversion)).Should(HaveJSONPath(
+		Eventually(k8s.Object(ctx, clusterversion)).Should(HaveJSONPath(
 			`{.status.conditions[?(@.type=="Available")].status}`,
 			BeEquivalentTo(corev1.ConditionTrue)),
 		)
-	})
+	}, SpecTimeout(5*time.Second))
 })
 
 func TestKubernetesHelper(t *testing.T) {

@@ -1,8 +1,8 @@
 package trackedclient
 
 import (
-	"context"
 	"testing"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -29,21 +29,21 @@ var _ = Describe("TrackedClient", Ordered, func() {
 		k8s = NewKubernetesHelper(WithClient(c))
 	})
 
-	It("should create a namespace", func() {
+	It("should create a namespace", func(ctx SpecContext) {
 		namespace := &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "my-namespace",
 			},
 		}
-		Eventually(k8s.Create(namespace)).Should(Succeed())
-		Eventually(k8s.Object(namespace)).Should(
+		Eventually(k8s.Create(ctx, namespace)).Should(Succeed())
+		Eventually(k8s.Object(ctx, namespace)).Should(
 			HaveJSONPath("{.status.phase}", Equal(corev1.NamespacePhase("Active"))),
 		)
-	})
+	}, SpecTimeout(time.Minute))
 
-	AfterAll(func() {
-		Expect(c.DeleteAllTracked(context.TODO())).Should(Succeed())
-	})
+	AfterAll(func(ctx SpecContext) {
+		Expect(c.DeleteAllTracked(ctx)).Should(Succeed())
+	}, NodeTimeout(time.Minute))
 })
 
 func TestKubernetesHelper(t *testing.T) {
