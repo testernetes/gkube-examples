@@ -28,20 +28,20 @@ var _ = Describe("Simple use of the KubernetesHelper", Ordered, func() {
 	})
 
 	It("should create a configmap", func(ctx SpecContext) {
-		Eventually(k8s.Create(ctx, cm)).Should(Succeed())
+		Eventually(k8s.Create).WithContext(ctx).WithArguments(cm).Should(Succeed())
 	}, SpecTimeout(time.Minute))
 
 	It("should update the configmap", func(ctx SpecContext) {
-		Eventually(k8s.Update(ctx, cm, func() error {
+		Eventually(k8s.Update).WithContext(ctx).WithArguments(cm, func() error {
 			cm.Data = map[string]string{
 				"something": "simple",
 			}
 			return nil
-		})).Should(Succeed())
+		}).Should(Succeed())
 	}, SpecTimeout(time.Minute))
 
 	It("should contain something simple ", func(ctx SpecContext) {
-		Eventually(k8s.Object(ctx, cm)).Should(
+		Eventually(k8s.Object).WithContext(ctx).WithArguments(cm).Should(
 			HaveJSONPath("{.data.something}", Equal("simple")),
 		)
 	}, SpecTimeout(time.Minute))

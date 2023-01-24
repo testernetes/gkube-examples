@@ -32,9 +32,9 @@ var _ = Describe("Openshift", Ordered, func() {
 				Name: "version",
 			},
 		}
-		Eventually(k8s.Object(ctx, clusterversion)).Should(HaveJSONPath(
-			`{.status.conditions[?(@.type=="Available")].status}`,
-			BeEquivalentTo(corev1.ConditionTrue)),
+		Eventually(k8s.Object).WithContext(ctx).WithArguments(clusterversion).Should(
+			HaveJSONPath(`{.status.conditions[?(@.type=="Available")].status}`,
+				BeEquivalentTo(corev1.ConditionTrue)),
 		)
 	}, SpecTimeout(5*time.Second))
 })

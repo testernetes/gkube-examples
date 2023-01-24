@@ -50,23 +50,23 @@ var _ = Describe("Conditions", Ordered, func() {
 		}
 	})
 
-	It("Should create the deployment using the KubernetesHelper", func() {
-		Eventually(k8s.Create(deployment)).Should(Succeed())
-	})
+	It("Should create the deployment using the KubernetesHelper", func(ctx SpecContext) {
+		Eventually(k8s.Create).WithContext(ctx).WithArguments(deployment).Should(Succeed())
+	}, SpecTimeout(time.Minute))
 
-	It("Should become healthy", func() {
-		Eventually(k8s.Object(deployment)).WithTimeout(time.Minute).Should(HaveJSONPath(
-			`{.status.conditions[?(@.type=="Available")]}`,
-			MatchFields(IgnoreExtras, Fields{
-				"Status": BeEquivalentTo(corev1.ConditionTrue),
-				"Reason": Equal("MinimumReplicasAvailable"),
-			}),
-		))
-	})
+	It("Should become healthy", func(ctx SpecContext) {
+		Eventually(k8s.Object).WithContext(ctx).WithArguments(deployment).Should(
+			HaveJSONPath(`{.status.conditions[?(@.type=="Available")]}`,
+				MatchFields(IgnoreExtras, Fields{
+					"Status": BeEquivalentTo(corev1.ConditionTrue),
+					"Reason": Equal("MinimumReplicasAvailable"),
+				}),
+			))
+	}, SpecTimeout(time.Minute))
 
-	AfterAll(func() {
-		Eventually(k8s.Delete(deployment)).Should(Succeed())
-	})
+	AfterAll(func(ctx SpecContext) {
+		Eventually(k8s.Delete).WithContext(ctx).WithArguments(deployment).Should(Succeed())
+	}, NodeTimeout(time.Minute))
 })
 
 func TestKubernetesHelper(t *testing.T) {

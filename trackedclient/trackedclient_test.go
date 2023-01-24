@@ -35,14 +35,14 @@ var _ = Describe("TrackedClient", Ordered, func() {
 				Name: "my-namespace",
 			},
 		}
-		Eventually(k8s.Create(ctx, namespace)).Should(Succeed())
-		Eventually(k8s.Object(ctx, namespace)).Should(
+		Eventually(k8s.Create).WithContext(ctx).WithArguments(namespace).Should(Succeed())
+		Eventually(k8s.Object).WithContext(ctx).WithArguments(namespace).Should(
 			HaveJSONPath("{.status.phase}", Equal(corev1.NamespacePhase("Active"))),
 		)
 	}, SpecTimeout(time.Minute))
 
 	AfterAll(func(ctx SpecContext) {
-		Expect(c.DeleteAllTracked(ctx)).Should(Succeed())
+		Eventually(c.DeleteAllTracked).WithContext(ctx).Should(Succeed())
 	}, NodeTimeout(time.Minute))
 })
 
